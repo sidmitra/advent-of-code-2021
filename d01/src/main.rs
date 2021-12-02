@@ -1,3 +1,4 @@
+
 use std::fs;
 
 // Part 2: 1749 is too high
