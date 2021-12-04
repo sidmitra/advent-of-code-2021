@@ -14,3 +14,7 @@ Using the challenge to learn rust!
 - Used the match statement for the first time, with multiple statements on each pattern. Not even used it yet in Python. Seems neat!
 
 - The tuple unpacking is weird, where you have to call .next() in successive lines, or use a separate itertools crate. Having builtin unpacking of arguments/tuples is a great feature to have built-in like python, and use it all the time.
+
+
+## Day 3
+- Single quote for characters, double for strings. Huh! wasn't expecting that.
