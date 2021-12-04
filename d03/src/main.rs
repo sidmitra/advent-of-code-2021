@@ -55,8 +55,8 @@ fn part_one() {
     );
 }
 
-
-fn count(rows: &Vec<&str>) -> (Vec<usize>, Vec<usize>){
+// Frequency count of 0s and 1s
+fn count(rows: &Vec<&str>) -> (Vec<usize>, Vec<usize>) {
     let word_length = rows[0].len();
 
     // Calculate counts of 0s/1s in bit positions
@@ -80,56 +80,81 @@ fn count(rows: &Vec<&str>) -> (Vec<usize>, Vec<usize>){
     }
     return (zero_counts, one_counts);
 }
-fn part_two() {
-    let filename = "input_test.txt";
+
+fn calc_oxygen_rating(filename: &str) -> isize {
+    // let filename = "input_test.txt";
     let content = fs::read_to_string(filename).expect("Something went wrong reading the file");
-    let rows: Vec<&str> = content.lines().collect();
+    let mut rows: Vec<&str> = content.lines().collect();
+
     let word_length = rows[0].len();
 
-    // Calculate counts of 0s/1s in bit positions
-    // let mut zero_counts = vec![0; word_length];
-    // let mut one_counts = vec![0; word_length];
-    // for row in rows {
-    //     // println!("row: {:?}", row);
-    //     let mut frequency: HashMap<char, i32> = HashMap::new();
-    //     let columns: Vec<char> = row.chars().collect();
-    //     // println!("{:?}", columns);
-    //     for (idx, column) in columns.iter().enumerate() {
-    //         let key = row.chars().nth(idx).unwrap();
-    //         // print_type_of(&key);
-    //         *frequency.entry(key).or_insert(0) += 1;
-    //         if column == &'0' {
-    //             zero_counts[idx] += 1;
-    //         } else {
-    //             one_counts[idx] += 1;
-    //         }
-    //     }
-    // }
-
-    // let mut zero_counts = vec![0; word_length];
-    // let mut one_counts = vec![0; word_length];
-    let (zero_counts, one_counts) = count(&rows);
-
-    println!("0s: {:?}", zero_counts);
-    println!("1s: {:?}", one_counts);
-
-
-    let mut oxygen_rating: String = "".to_owned();
-    let mut co2_rating: String = "".to_owned();
+    let mut rating: String = "".to_owned();
     for idx in 0..word_length {
+        let (zero_counts, one_counts) = count(&rows);
+
         // there are more 1s in the bit position
         if (one_counts[idx] >= zero_counts[idx]) {
-            oxygen_rating.push_str("1");
-            co2_rating.push_str("0");
+            // println!("more 1 //// {:?}", idx);
+            rating.push_str("1");
+            rows = rows
+                .into_iter()
+                .filter(|element| element.chars().nth(idx).unwrap() == '1')
+                .collect();
         } else {
-            oxygen_rating.push_str("0");
-            co2_rating.push_str("1");
+            // println!("more 0 ////{:?}", idx);
+            rating.push_str("0");
+            rows = rows
+                .into_iter()
+                .filter(|element| element.chars().nth(idx).unwrap() == '0')
+                .collect();
+        }
+        if rows.len() == 1 {
+            //return rows[0];
+            break;
         }
     }
 
-    let oxygen_rating_int = isize::from_str_radix(&oxygen_rating, 2).unwrap();
-    let co2_rating_int = isize::from_str_radix(&co2_rating, 2).unwrap();
-    let life_support = oxygen_rating_int * co2_rating_int;
+    let rating_int = isize::from_str_radix(&rows[0], 2).unwrap();
+    println!("{:?}", rating_int);
+    return rating_int;
+}
+
+fn calc_co2_rating(filename: &str) -> isize {
+    let content = fs::read_to_string(filename).expect("Something went wrong reading the file");
+    let mut rows: Vec<&str> = content.lines().collect();
+
+    let word_length = rows[0].len();
+
+    let mut rating: String = "".to_owned();
+    for idx in 0..word_length {
+        let (zero_counts, one_counts) = count(&rows);
+
+        // there are more 1s in the bit position
+        if (one_counts[idx] >= zero_counts[idx]) {
+            rows = rows
+                .into_iter()
+                .filter(|element| element.chars().nth(idx).unwrap() == '0')
+                .collect();
+        } else {
+            rows = rows
+                .into_iter()
+                .filter(|element| element.chars().nth(idx).unwrap() == '1')
+                .collect();
+        }
+        if rows.len() == 1 {
+            break;
+        }
+    }
+
+    let rating_int = isize::from_str_radix(&rows[0], 2).unwrap();
+    println!("{:?}", rating_int);
+    return rating_int;
+}
+
+fn part_two(filename: &str) {
+    let oxygen_rating = calc_oxygen_rating(filename);
+    let co2_rating = calc_co2_rating(filename);
+    let life_support = oxygen_rating * co2_rating;
     println!("{:?}*{:?} = {:?}", oxygen_rating, co2_rating, life_support);
 }
 
@@ -157,6 +182,6 @@ fn part_two() {
 // }
 
 fn main() {
-    // part_one();
-    part_two();
+    part_one();
+    part_two(&"input.txt");
 }

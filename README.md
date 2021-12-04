@@ -18,3 +18,8 @@ Using the challenge to learn rust!
 
 ## Day 3
 - Single quote for characters, double for strings. Huh! wasn't expecting that.
+- Dereferencing i.e. & etc is slightly easier to grok now.
+- List comprehension, filter is a bit weird, and got stuck figuring out the correct type hints.
+- Haven't figured out when is something an iter, and when you have to do into_iter(), iter()
+- The solution came out fairly ugly with code duplication. Did it just to not have to figure out re-using
+  lists/filters just yet.
