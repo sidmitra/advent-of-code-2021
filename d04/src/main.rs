@@ -1,60 +1,143 @@
 #![allow(unused)]
 use std::collections::HashMap;
 use std::fs;
+use std::io;
+use std::io::Write; // <--- bring flush() into scope
 
 fn print_type_of<T>(_: &T) {
     println!("{}", std::any::type_name::<T>())
 }
 
-fn part_one(filename: &str) {
-    let filename = "input.txt";
-    let content = fs::read_to_string(filename).expect("Something went wrong reading the file");
-    let rows: Vec<&str> = content.lines().collect();
-    let word_length = rows[0].len();
-    let mut zero_counts = vec![0; word_length];
-    let mut one_counts = vec![0; word_length];
+#[derive(Debug, Copy, Clone)]
+struct Cell {
+    val: usize,
+    is_marked: bool,
+}
 
-    for row in rows {
-        // println!("row: {:?}", row);
-        let mut frequency: HashMap<char, i32> = HashMap::new();
-        let columns: Vec<char> = row.chars().collect();
-        // println!("{:?}", columns);
-        for (idx, column) in columns.iter().enumerate() {
-            let key = row.chars().nth(idx).unwrap();
-            // print_type_of(&key);
-            *frequency.entry(key).or_insert(0) += 1;
-            if column == &'0' {
-                zero_counts[idx] += 1;
-            } else {
-                one_counts[idx] += 1;
+fn get_board(filename: &str) -> (Vec<usize>, Vec<Vec<Vec<Cell>>>) {
+    let content = fs::read_to_string(filename).expect("Something went wrong reading the file");
+    let lines: Vec<&str> = content.lines().collect();
+    let mut lines_iter = lines.iter();
+
+    // drawn numbers
+    let drawings: Vec<usize> = lines_iter
+        .next()
+        .unwrap()
+        .split(",")
+        .map(|x| x.parse::<usize>().unwrap())
+        .collect();
+    // println!("{:?}", drawings);
+
+    // Skip empty lines
+    lines_iter.next().unwrap();
+    // println!("=================");
+
+    let mut current_board: Vec<Vec<Cell>> = vec![];
+    let mut boards: Vec<Vec<Vec<Cell>>> = vec![];
+    let num_lines = lines_iter.len();
+    for (idx, line) in lines_iter.enumerate() {
+        let is_separator_or_last_line = line.trim().is_empty() | (idx == num_lines - 1);
+        if is_separator_or_last_line {
+            // Reset board
+            boards.push(current_board);
+            current_board = vec![];
+            // println!("====");
+            continue;
+        }
+        let row: Vec<Cell> = line
+            .split(" ")
+            .filter(|s| !s.is_empty())
+            .map(|x| x.parse::<usize>().unwrap())
+            .map(|x| Cell {
+                val: x,
+                is_marked: false,
+            })
+            .collect();
+        // println!("{:?}", row);
+        current_board.push(row);
+    }
+
+    return (drawings, boards);
+}
+
+fn mark_board(drawn: usize, board: Vec<Vec<Cell>>) {
+    for row in board {
+        for mut cell in row {
+            if cell.val == drawn {
+                cell.is_marked = true;
             }
         }
     }
+}
 
-    // println!("{:?}", zero_counts);
-    // println!("{:?}", one_counts);
 
-    let mut gamma: String = "".to_owned();
-    let mut epsilon: String = "".to_owned();
-    for idx in 0..zero_counts.len() {
-        if (zero_counts[idx] > one_counts[idx]) {
-            gamma.push_str("0");
-            epsilon.push_str("1");
-        } else {
-            gamma.push_str("1");
-            epsilon.push_str("0");
+fn print_board(board: Vec<Vec<Cell>>){
+    for row in board{
+        for cell in row{
+            print!("{:?} ", cell.val);
+            if cell.is_marked{
+                print!("x" );
+            }
+        }
+        println!("");
+    }
+    println!("===")
+}
+
+
+fn is_board_won(board: Vec<Vec<Cell>>) -> bool{
+    // check rows
+    for y in 0..5{
+        // println!("{:?}", y);
+        let row = &board[y];
+        // rintln!("{:?}", row);
+        let mut is_row_done = true;
+        for cell in row {
+            if !cell.is_marked{
+                is_row_done = false;
+            }
+        }
+        println!("");
+    }
+    return false;
+}
+
+fn part_one(filename: &str) {
+    let (drawings, orig_boards) = get_board(&filename);
+
+    let boards = orig_boards.to_owned();
+
+    for drawn in drawings {
+        println!("drawn = {:?}", drawn);
+        for board in boards.iter() {
+            // mark board
+            for row in board {
+                for mut cell in row.to_owned() {
+                    if cell.val == drawn {
+                        cell.is_marked = true;
+                    }
+                }
+            }
+
+            print_board(board.clone());
+            // check board won
+            // let is_won = is_board_won(board.clone());
         }
     }
 
-    let gamma_int = isize::from_str_radix(&gamma, 2).unwrap();
-    let epsilon_int = isize::from_str_radix(&epsilon, 2).unwrap();
-    let power_consumption = gamma_int * epsilon_int;
-    println!(
-        "{:?}*{:?} = {:?}",
-        gamma_int, epsilon_int, power_consumption
-    );
+    // for board in boards{
+    //     for row in board{
+    //         for item in row{
+    //             print!("{:?} ", item.val);
+    //             io::stdout().flush().unwrap();
+    //         }
+    //         println!{""};
+    //     }
+    //     println!("===============", );
+    // }
+    // println!("=================");
 }
 
 fn main() {
-    part_one(&"input.txt");
+    part_one(&"input_test.txt");
 }
