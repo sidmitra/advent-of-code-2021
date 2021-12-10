@@ -23,3 +23,15 @@ Using the challenge to learn rust!
 - Haven't figured out when is something an iter, and when you have to do into_iter(), iter()
 - The solution came out fairly ugly with code duplication. Did it just to not have to figure out re-using
   lists/filters just yet.
+
+
+## Day 4
+
+- Started with doing a board struct, but seemed too complex to make vector of structs.
+- Moved to a simple vector of vector of cells pattern. Cell is a int & bool struct.
+- Cannot figure out why bool isn't updated when i print the board after!
+
+
+## Skipped days
+
+## Day 9

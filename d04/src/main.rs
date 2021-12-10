@@ -71,11 +71,11 @@ fn mark_board(drawn: usize, board: Vec<Vec<Cell>>) {
 }
 
 
-fn print_board(board: Vec<Vec<Cell>>){
+fn print_board(board: &Vec<Vec<Cell>>){
     for row in board{
         for cell in row{
             print!("{:?} ", cell.val);
-            if cell.is_marked{
+            if cell.is_marked == true{
                 print!("x" );
             }
         }
@@ -109,19 +109,22 @@ fn part_one(filename: &str) {
 
     for drawn in drawings {
         println!("drawn = {:?}", drawn);
-        for board in boards.iter() {
+        for board in boards.to_owned() {
             // mark board
             for row in board {
                 for mut cell in row.to_owned() {
                     if cell.val == drawn {
+                        println!("===checked");
                         cell.is_marked = true;
                     }
                 }
             }
 
-            print_board(board.clone());
             // check board won
             // let is_won = is_board_won(board.clone());
+        }
+        for board in boards.iter(){
+            print_board(board);
         }
     }
 
