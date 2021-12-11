@@ -35,3 +35,6 @@ Using the challenge to learn rust!
 ## Skipped days
 
 ## Day 9
+
+- Figured out 2d vectors finally!
+- Test input was passing but the actual input wasn't. Pretty stoked at using colored crate to print colored terminal output. This was instrumental in debugging a wrongly selected item in a 100x100 array.

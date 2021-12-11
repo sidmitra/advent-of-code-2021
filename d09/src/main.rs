@@ -1,4 +1,8 @@
 #![allow(unused)]
+
+extern crate colored;
+use colored::*;
+
 use std::fs;
 
 fn print_type_of<T>(_: &T) {
@@ -7,7 +11,7 @@ fn print_type_of<T>(_: &T) {
 
 // 1604: too high
 fn main() {
-    let filename: &str = "input_test.txt";
+    let filename: &str = "input.txt";
     let content = fs::read_to_string(filename).expect("Something went wrong reading the file");
     let lines = content.lines().collect::<Vec<&str>>();
     const RADIX: u32 = 10;
@@ -57,7 +61,7 @@ fn main() {
                     println!("left: within bounds {:?}", w);
                 }
 
-                if cave[h][w - 1] < cave[h][w] {
+                if cave[h][w - 1] <= cave[h][w] {
                     is_low = false;
                 }
             }
@@ -67,7 +71,7 @@ fn main() {
                 if debug {
                     println!("right: within bounds {:?}", w);
                 }
-                if (cave[h][w + 1] < cave[h][w]) {
+                if (cave[h][w + 1] <= cave[h][w]) {
                     // is_right_higher = true
                     is_low = false;
                     if debug{
@@ -81,7 +85,7 @@ fn main() {
                 if debug {
                     println!("top: within bounds {:?}", h);
                 }
-                if (cave[h - 1][w] < cave[h][w]) {
+                if (cave[h - 1][w] <=cave[h][w]) {
                     is_low = false;
                 }
             }
@@ -91,7 +95,7 @@ fn main() {
                 if debug {
                     println!("bottom: within bounds {:?}", h);
                 }
-                if (cave[h + 1][w] < cave[h][w]) {
+                if (cave[h + 1][w] <= cave[h][w]) {
                     is_low = false;
                 }
             }
@@ -100,10 +104,15 @@ fn main() {
                 println!("{:?}, {:?}: {:?} = {:?}", h, w, is_low, cave[h][w]);
             }
             if is_low {
-                println!("{:?}, {:?}, {:?}", h, w, cave[h][w]);
+                // println!("{:?}, {:?}, risk={:?}", h, w, cave[h][w]);
                 risk_level = risk_level + 1 + cave[h][w];
+                print!("{:}", cave[h][w].to_string().green());
+            }
+            else{
+                print!("{:?}", cave[h][w]);
             }
         }
+        println!("");
     }
-    println!("Risk: {:?}", risk_level);
+    println!("{}", risk_level.to_string().green())
 }
